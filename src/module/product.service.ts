@@ -1,7 +1,22 @@
 import { randomUUID } from 'node:crypto'
-import type { Product, ProductBody } from '../schemas/index.ts'
+import type { Message, Product, ProductBody } from '../schemas/index.js'
+import process from 'node:process'
 
 let products: Product[] = []
+
+if (process.send) {
+  process.on('message', (message: Message) => {
+    if (message.type === 'sync_products') {
+      products = message.data
+    }
+  })
+}
+
+const notifyMaster = () => {
+  if (process.send) {
+    process.send({ type: 'sync_master', data: products })
+  }
+}
 
 export const productService = () => {
   const findAll = (): Product[] => {
@@ -17,6 +32,8 @@ export const productService = () => {
     const id = randomUUID()
     const newProduct = { ...data, id }
     products.push(newProduct)
+
+    notifyMaster()
     return newProduct
   }
 
@@ -29,6 +46,8 @@ export const productService = () => {
     const index = products.indexOf(existingProduct)
     const updatedProduct = { ...data, id: existingProduct.id }
     products[index] = updatedProduct
+
+    notifyMaster()
     return updatedProduct
   }
 
@@ -38,6 +57,8 @@ export const productService = () => {
       return false
     }
     products = products.filter(product => product.id !== id)
+
+    notifyMaster()
     return true
   }
 

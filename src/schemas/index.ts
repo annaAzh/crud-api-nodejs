@@ -1,4 +1,5 @@
 import z from 'zod'
+import { type Worker } from 'node:cluster'
 
 export const ProductBodySchema = z
   .object({
@@ -21,3 +22,13 @@ export type ProductParams = z.infer<typeof ProductParamsSchema>
 export type ProductBody = z.infer<typeof ProductBodySchema>
 
 export type Product = ProductBody & ProductParams
+
+export type Message = {
+  type: 'sync_products' | 'sync_master'
+  data: Product[]
+}
+
+export type WorkerType = {
+  worker: Worker
+  port: number
+}

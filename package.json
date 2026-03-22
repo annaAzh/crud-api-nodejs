@@ -17,7 +17,7 @@
     "start:dev": "nodemon --exec tsx src/index.ts",
     "start:prod": "npm run build && node dist/index.js",
     "build": "tsc -p tsconfig.json",
-    "lint": "eslint src"
+    "start:multi": "nodemon --exec tsx src/multi.ts"
   },
   "dependencies": {
     "fastify": "^5.8.2",
