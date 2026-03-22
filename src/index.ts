@@ -6,6 +6,7 @@ import {
   type ZodTypeProvider
 } from 'fastify-type-provider-zod'
 import productRoutes from './module/product.routes.js'
+import { fileURLToPath } from 'node:url'
 
 loadEnvFile()
 
@@ -33,10 +34,16 @@ server.setErrorHandler((error: FastifyError, request: FastifyRequest, reply: Fas
 
 server.register(productRoutes, { prefix: '/api' })
 
-server.listen({ port: Number(process.env['PORT']) || 8080 }, (err, address) => {
-  if (err) {
-    console.error(err)
-    process.exit(1)
-  }
-  console.log(`Server listening at ${address}`)
-})
+export { server }
+
+const isMain = process.argv[1] === fileURLToPath(import.meta.url)
+
+if (isMain) {
+  server.listen({ port: Number(process.env['PORT']) || 8080 }, (err, address) => {
+    if (err) {
+      console.error(err)
+      process.exit(1)
+    }
+    console.log(`Server listening at ${address}`)
+  })
+}

@@ -3,11 +3,14 @@ import { type Worker } from 'node:cluster'
 
 export const ProductBodySchema = z
   .object({
-    name: z.string('Name is required').min(1),
-    description: z.string('Description is required').min(1),
-    price: z.number('Price is required').positive('Price must be positive'),
-    category: z.string('Category is required').min(1),
-    inStock: z.boolean('In stock is required')
+    name: z.string({ error: 'Name is required' }).trim().min(1, 'Name cannot be empty'),
+    description: z
+      .string({ error: 'Description is required' })
+      .trim()
+      .min(1, 'Description cannot be empty'),
+    price: z.number({ error: 'Price is required' }).positive('Price must be positive'),
+    category: z.string({ error: 'Category is required' }).trim().min(1, 'Category cannot be empty'),
+    inStock: z.boolean({ error: 'In stock is required' })
   })
   .strict()
 
