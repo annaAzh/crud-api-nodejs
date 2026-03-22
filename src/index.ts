@@ -7,6 +7,7 @@ import {
 } from 'fastify-type-provider-zod'
 import productRoutes from './module/product.routes.js'
 import { fileURLToPath } from 'node:url'
+import cluster from 'node:cluster'
 
 loadEnvFile()
 
@@ -37,8 +38,9 @@ server.register(productRoutes, { prefix: '/api' })
 export { server }
 
 const isMain = process.argv[1] === fileURLToPath(import.meta.url)
+const isWorker = cluster.isWorker
 
-if (isMain) {
+if (isMain || isWorker) {
   server.listen({ port: Number(process.env['PORT']) || 8080 }, (err, address) => {
     if (err) {
       console.error(err)

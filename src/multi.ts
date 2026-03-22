@@ -20,8 +20,16 @@ if (cluster.isPrimary) {
   }
 
   const server = http.createServer((req, res) => {
-    currentWorker = (currentWorker + 1) % numInstances
-    const currentPort = workers[currentWorker]?.port
+    currentWorker = (currentWorker + 1) % workers.length
+
+    const target = workers[currentWorker]
+    if (!target || !target.port) {
+      res.write(500)
+      return res.end('No workers available')
+    }
+    const currentPort = target.port
+
+    console.log(`Request method - ${req.method}, request url - ${req.url}, port: ${currentPort}`)
 
     const proxy = http.request(
       {
@@ -42,6 +50,8 @@ if (cluster.isPrimary) {
     proxy.on('error', () => {
       res.writeHead(502, 'Bad Gateway')
     })
+
+    req.on('end', () => proxy.end())
   })
 
   server.listen(mainPort, () => console.log(`Load balancer listening on port ${mainPort}`))
