@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from 'fastify'
-import { productService } from './product.service.ts'
-import type { ProductBody, ProductParams } from '../schemas/index.ts'
+import { productService } from './product.service.js'
+import type { ProductBody, ProductParams } from '../schemas/index.js'
 
 const productServiceInstance = productService()
 

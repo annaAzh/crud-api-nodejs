@@ -5,7 +5,7 @@ import {
   validatorCompiler,
   type ZodTypeProvider
 } from 'fastify-type-provider-zod'
-import productRoutes from './module/product.routes.ts'
+import productRoutes from './module/product.routes.js'
 
 loadEnvFile()
 
